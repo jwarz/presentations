@@ -172,121 +172,88 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 			setTimeout( whenReady, 500, callback )
 		}
 	}
-	
-// 1. Functions for creating buttons
-// 1.1 // Cached references to DOM elements
-var dom = {};
-        
-// 1.2 Cache references to key DOM elements
-dom.reveal = document.querySelector('.reveal');
-dom.toolbar = document.querySelector('.chalkboard-button');
 
-if (!dom.toolbar) {
-  dom.toolbar = createNode(dom.reveal, 'div', 'chalkboard-button', null);
-} else {
-  // move the existing toolbar after the other Reveal components
-  dom.reveal.appendChild(dom.toolbar);
-}
 
-function createNode(container, tagname, classname, innerHTML) {
-        var node = document.createElement(tagname);
-              if (classname) {
-                if (Array.isArray(classname)) {
-                  classname.forEach(function(c) {
-                    node.classList.add(c);
-                  });
-                } else {
-                  node.classList.add(classname);
-                }
-              }
-              if (typeof innerHTML === 'string') {
-                node.innerHTML = innerHTML;
-              }
-              container.appendChild(node);
-
-              return node;
-}
-	
-function createToolbarButton(icon, cb, bid, nvar) {
-  var button = createNode(
-    dom.toolbar,
-    'a',
-    'chalkboard-button',
-    null
-  );
-  button.setAttribute('href', '#');
-  // Added by jwarz
-  button.id = bid;
-  // button.style.visibility = "visible";
-  button.style.position = "absolute";
-  button.style.zIndex = 30;
-  button.style.fontSize = "24px";
-  button.style.left = nvar.left || "70px";
-  button.style.bottom = nvar.bottom ||  "30px";
-  button.style.top = nvar.top ||  "auto";
-  button.style.right = nvar.right ||  "auto";
-  document.querySelector(".reveal").appendChild( button );
-  // End
-  button.onclick = function(event) {
-    event.preventDefault();
-    cb(event);
-  };
-  createNode(button, 'i', ['fa', icon]);
-  return button;
-}	
-
-// 2. Creating buttons
 	if ( toggleChalkboardButton ) {
 //console.log("toggleChalkboardButton")
-		createToolbarButton('fa-pen-square', 
-		                    function() { RevealChalkboard.toggleChalkboard(); return false;},
-		                    'toggle-chalkboard',
-		                    toggleChalkboardButton) 
+		var button = document.createElement( 'div' );
+		button.className = "chalkboard-button";
+		button.id = "toggle-chalkboard";
+		button.style.visibility = "visible";
+		button.style.position = "absolute";
+		button.style.zIndex = 30;
+		button.style.fontSize = "24px";
+
+		button.style.left = toggleChalkboardButton.left || "30px";
+		button.style.bottom = toggleChalkboardButton.bottom ||  "30px";
+		button.style.top = toggleChalkboardButton.top ||  "auto";
+		button.style.right = toggleChalkboardButton.right ||  "auto";
+
+		button.innerHTML = '<a href="#" onclick="RevealChalkboard.toggleChalkboard(); return false;"><i class="fa fa-pen-square"></i></a>'
+		document.querySelector(".reveal").appendChild( button );
 	}
-	
 	if ( toggleNotesButton ) {
 //console.log("toggleNotesButton")
-		createToolbarButton('fa-pen', 
-		                    function() { RevealChalkboard.toggleNotesCanvas(); return false;},
-		                    'toggle-notes',
-		                    toggleNotesButton)
+		var button = document.createElement( 'div' );
+		button.className = "chalkboard-button";
+		button.id = "toggle-notes";
+		button.style.position = "absolute";
+		button.style.zIndex = 30;
+		button.style.fontSize = "24px";
+
+		button.style.left = toggleNotesButton.left || "70px";
+		button.style.bottom = toggleNotesButton.bottom ||  "30px";
+		button.style.top = toggleNotesButton.top ||  "auto";
+		button.style.right = toggleNotesButton.right ||  "auto";
+
+		button.innerHTML = '<a href="#" onclick="RevealChalkboard.toggleNotesCanvas(); return false;"><i class="fa fa-pen"></i></a>'
+		document.querySelector(".reveal").appendChild( button );
 	}
+	
+	
+	
 	
 	if ( downloadButton ) {
 //console.log("downloadButton")
-		createToolbarButton('fa-download', 
-		                    function() { RevealChalkboard.download(); return false;},
-		                    'download',
-		                    downloadButton)
+		var button = document.createElement( 'div' );
+		button.className = "chalkboard-button";
+		button.id = "download";
+		button.style.position = "absolute";
+		button.style.zIndex = 30;
+		button.style.fontSize = "24px";
+
+		button.style.left = downloadButton.left || "70px";
+		button.style.bottom = downloadButton.bottom ||  "30px";
+		button.style.top = downloadButton.top ||  "auto";
+		button.style.right = downloadButton.right ||  "auto";
+
+		button.innerHTML = '<a href="#" onclick="RevealChalkboard.download(); return false;"><i class="fa fa-download"></i></a>'
+		document.querySelector(".reveal").appendChild( button );
+	}
+	if ( fullscreenButton ) {
+//console.log("fullscreenButton")
+		var button = document.createElement( 'div' );
+		button.className = "chalkboard-button";
+		button.id = "fullscreen";
+		button.style.position = "absolute";
+		button.style.zIndex = 30;
+		button.style.fontSize = "24px";
+
+		button.style.left = fullscreenButton.left || "70px";
+		button.style.bottom = fullscreenButton.bottom ||  "30px";
+		button.style.top = fullscreenButton.top ||  "auto";
+		button.style.right = fullscreenButton.right ||  "auto";
+
+		button.innerHTML = '<a href="#" onclick="screenfull.toggle(document.documentElement); return false;"><i class="fa fa-expand"></i></a>'
+		document.querySelector(".reveal").appendChild( button );
 	}
 	
-/*****************************************************************
-** Fullscreen
-******************************************************************/
-        if ( fullscreenButton ) {
-        //console.log("fullscreenButton")
-            fullscreenButton = createToolbarButton('fa-expand', function() {
-               if (screenfull.enabled) {
-                   screenfull.toggle(document.documentElement);
-                   }
-               }, 
-               'fullscreen',
-               fullscreenButton);
-        }
-
-        // set fullscreen button icon to match fullscreen state
-	if (screenfull.enabled) {
-          screenfull.on('change', function() {
-            var icon = fullscreenButton.querySelector('i');
-            icon.classList.remove(
-              screenfull.isFullscreen ? 'fa-expand' : 'fa-compress'
-            );
-            icon.classList.add(
-              screenfull.isFullscreen ? 'fa-compress' : 'fa-expand'
-            );
-          });
-        }
-
+if (screenfull.enabled) {
+    screenfull.on('change', () => {
+        console.log('Am I fullscreen?', screenfull.isFullscreen ? 'Yes' : 'No');
+    });
+}
+	
 //alert("Buttons");
 
 	var drawingCanvas = [ {id: "notescanvas" }, {id: "chalkboard" } ];
